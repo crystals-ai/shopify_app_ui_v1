@@ -1,0 +1,23 @@
+<script>
+  window.RAG_CHAT_CONFIG = {
+    apiUrl: "https://d23n0tn15vtkdi.cloudfront.net/chat",
+    apiKey: "vit_Io9rvkiCQkWgH8rh6SlNh1h206LLTQOaWl1plOxNxLs",
+    brandName: "VitnRich",
+    accentColor: "#b99d3b",
+    accentTextColor: "#000000",
+    accentOutlineColor: "#703f07",
+    suggestedQuestions: [
+      "What products does VitnRich sell?",
+      "Are your products suitable for diabetics?",
+      "Is shipping available in my city?"
+    ]
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/gh/crystals-ai/shopify_app_ui_v1@main/widget.js"></script>
+
+{% schema %}
+{
+  "name": "VitnRich Chat Widget",
+  "target": "body"
+}
+{% endschema %}
