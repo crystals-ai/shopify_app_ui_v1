@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teepi Taap — Demo</title>
+  <style>
+    :root {
+      --tt-dark: #111111;
+      --tt-orange: #f97316;
+      --tt-yellow: #fde047;
+      --tt-green: #84cc16;
+      --tt-red: #ef4444;
+      --tt-cream: #fff7dc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--tt-cream);
+      color: var(--tt-dark);
+    }
+
+    /* ---- Nav ---- */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: var(--tt-cream);
+    }
+    nav .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    nav .logo span { color: var(--tt-orange); }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    nav ul a { color: var(--tt-dark); text-decoration: none; }
+    nav .cart-btn {
+      background: var(--tt-dark);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      text-align: center;
+      padding: 60px 24px 40px;
+    }
+    .hero .eyebrow {
+      display: inline-block;
+      background: var(--tt-yellow);
+      color: var(--tt-dark);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 16px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    .hero h1 .accent { color: var(--tt-orange); }
+    .hero p {
+      max-width: 520px;
+      margin: 0 auto 28px;
+      font-size: 16px;
+      color: #444;
+    }
+    .hero .cta {
+      background: var(--tt-orange);
+      color: #fff;
+      border: none;
+      padding: 14px 30px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+    }
+
+    /* ---- Product cards ---- */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.06);
+      border: 2px solid transparent;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .product-card:hover {
+      border-color: var(--tt-orange);
+      transform: translateY(-4px);
+    }
+    .product-card .swatch {
+      width: 100%;
+      height: 110px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    .swatch.orange { background: #ffe4cc; }
+    .swatch.yellow { background: #fff6bf; }
+    .swatch.green { background: #eafccb; }
+    .swatch.red { background: #ffd9d9; }
+    .product-card h3 { margin: 0 0 6px; font-size: 15px; }
+    .product-card .price {
+      font-weight: 800;
+      color: var(--tt-orange);
+      font-size: 14px;
+    }
+    .product-card .price .was {
+      color: #999;
+      text-decoration: line-through;
+      font-weight: 500;
+      margin-right: 6px;
+    }
+
+    /* ---- Footer ---- */
+    footer {
+      text-align: center;
+      padding: 40px 24px 80px;
+      color: #777;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">Teepi<span>Taap</span></div>
+    <ul>
+      <li><a href="#">Our Story</a></li>
+      <li><a href="#">Shop</a></li>
+      <li><a href="#">Become a Partner</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+    <button class="cart-btn">Cart (0)</button>
+  </nav>
+
+  <section class="hero">
+    <span class="eyebrow">India's First Vitamin D Pop</span>
+    <h1>Sunshine in <span class="accent">every can.</span></h1>
+    <p>Zero sugar, zero calories, 20% daily Vitamin D per can — the guilt-free soda upgrade your body's been missing.</p>
+    <button class="cta">Shop Now</button>
+  </section>
+
+  <section class="products">
+    <div class="product-card">
+      <div class="swatch orange">🍊</div>
+      <h3>Orange Pop — Pack of 6</h3>
+      <div class="price"><span class="was">₹390</span>₹360</div>
+    </div>
+    <div class="product-card">
+      <div class="swatch yellow">🍋</div>
+      <h3>Lemon Lime — Pack of 6</h3>
+      <div class="price"><span class="was">₹390</span>₹360</div>
+    </div>
+    <div class="product-card">
+      <div class="swatch green">🍏</div>
+      <h3>Crisp Apple — Pack of 6</h3>
+      <div class="price"><span class="was">₹390</span>₹360</div>
+    </div>
+    <div class="product-card">
+      <div class="swatch red">🎁</div>
+      <h3>Variety Pack — Pack of 6</h3>
+      <div class="price"><span class="was">₹390</span>₹360</div>
+    </div>
+  </section>
+
+  <footer>
+    Demo page for the Teepi Taap–themed chat assistant. Brand content mock — not the live site.
+  </footer>
+
+  <script>
+    window.RAG_CHAT_CONFIG = {
+      apiUrl: "https://d23n0tn15vtkdi.cloudfront.net/chat",
+      apiKey: "teepi_J2Cl9I7EFEJCY532Q2EtJg8rzLAPmZFW3hwVsTPEU_A",
+      brandName: "Teepi Taap",
+      accentColor: "#f97316",
+      accentTextColor: "#ffffff",
+      accentOutlineColor: "#c2410c",
+      suggestedQuestions: [
+        "What flavors does Teepi Taap come in?",
+        "How much Vitamin D is in each can?",
+        "Does Teepi Taap contain sugar or caffeine?",
+        "What is your return policy?",
+      ],
+    };
+  </script>
+  <script src="widget.js"></script>
+</body>
+</html>
