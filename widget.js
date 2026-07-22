@@ -242,7 +242,7 @@
     #rag-chat-suggestions {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 2px;
       padding: 12px 16px 12px;
       flex-shrink: 0;
     }
@@ -292,6 +292,20 @@
     }
     #rag-chat-send:disabled { opacity: 0.5; cursor: default; }
     #rag-chat-send svg { width: 16px; height: 16px; fill: ${config.accentTextColor}; }
+
+    #rag-chat-powered-by {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color:rgb(41, 42, 43);
+      padding: 1px 6px 10px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    #rag-chat-powered-by a {
+      color: inherit;
+      text-decoration: underline;
+    }
   `;
   document.head.appendChild(style);
 
@@ -334,6 +348,7 @@
         <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
       </button>
     </div>
+    <div id="rag-chat-powered-by">Powered by <a href="https://supersearch-1k6i.onrender.com/" target="_blank" rel="noopener noreferrer">SuperSearch</a></div>
   `;
 
   document.body.appendChild(bubble);
