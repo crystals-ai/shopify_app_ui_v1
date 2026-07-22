@@ -29,6 +29,8 @@
       accentTextColor: "#fff",
       accentOutlineColor: null, // defaults to accentColor below; set separately if accentColor doesn't have enough contrast against white
       suggestedQuestions: [],
+      showBanner: true,
+      bannerText: null, // defaults to `Chat with ${brandName} AI Shopping Assistant`
       statusMessages: [
         "Thinking...",
         "Fetching brand details...",
@@ -39,6 +41,7 @@
     window.RAG_CHAT_CONFIG || {}
   );
   if (!config.accentOutlineColor) config.accentOutlineColor = config.accentColor;
+  if (!config.bannerText) config.bannerText = `Chat with ${config.brandName} AI Shopping Assistant`;
 
   function authHeaders() {
     const headers = { "Content-Type": "application/json" };
@@ -70,6 +73,85 @@
     }
     #rag-chat-bubble:hover { transform: scale(1.06); }
     #rag-chat-bubble svg { width: 28px; height: 28px; fill: ${config.accentTextColor}; }
+
+    #rag-chat-banner {
+      position: fixed;
+      bottom: 96px;
+      right: 24px;
+      max-width: 230px;
+      background: #fff;
+      color: #1a1a1a;
+      border: 1px solid #e6e8eb;
+      border-radius: 14px;
+      padding: 12px 32px 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 999998;
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+      transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    /* Visibility (opacity/position) is driven by a transition on .visible,
+       kept entirely separate from the .bounce keyframe animation below —
+       otherwise swapping animation-name mid-flight drops the "forwards"
+       hold on opacity and the banner silently reverts to opacity:0. */
+    #rag-chat-banner.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    #rag-chat-banner::after {
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      right: 28px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-right: 1px solid #e6e8eb;
+      border-bottom: 1px solid #e6e8eb;
+      transform: rotate(45deg);
+    }
+    #rag-chat-banner.bounce {
+      animation: rag-banner-bounce 1.6s ease-in-out 4;
+    }
+    #rag-chat-banner.hidden { display: none; }
+    #rag-chat-banner .rag-banner-dot {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: rag-banner-pulse 1.6s ease-out infinite;
+    }
+    #rag-chat-banner-close {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      background: none;
+      border: none;
+      color: #9aa0a6;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+    }
+    #rag-chat-banner-close:hover { color: #444; }
+
+    @keyframes rag-banner-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes rag-banner-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
 
     #rag-chat-panel {
       position: fixed;
@@ -221,6 +303,19 @@
   bubble.setAttribute("aria-label", "Open chat assistant");
   bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
 
+  let banner = null;
+  if (config.showBanner) {
+    banner = document.createElement("div");
+    banner.id = "rag-chat-banner";
+    banner.setAttribute("role", "button");
+    banner.setAttribute("tabindex", "0");
+    banner.innerHTML = `
+      <span class="rag-banner-dot"></span>
+      ${config.bannerText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+      <button id="rag-chat-banner-close" aria-label="Dismiss">&times;</button>
+    `;
+  }
+
   const panel = document.createElement("div");
   panel.id = "rag-chat-panel";
   panel.innerHTML = `
@@ -242,6 +337,7 @@
   `;
 
   document.body.appendChild(bubble);
+  if (banner) document.body.appendChild(banner);
   document.body.appendChild(panel);
 
   const messagesEl = panel.querySelector("#rag-chat-messages");
@@ -258,6 +354,7 @@
   let hasSentMessage = false;
 
   function openPanel() {
+    hideBanner();
     panel.classList.add("open");
     if (!panelOpened) {
       renderSuggestions();
@@ -271,10 +368,36 @@
     panel.classList.remove("open");
   }
 
+  function hideBanner() {
+    if (banner) banner.classList.add("hidden");
+  }
+
   bubble.addEventListener("click", () => {
     panel.classList.contains("open") ? closePanel() : openPanel();
   });
   closeBtn.addEventListener("click", closePanel);
+
+  if (banner) {
+    // Fade/slide in first (own transition), then layer a few bounces on top
+    // shortly after — kept as two separate class toggles (see CSS comment)
+    // so the visible state persists independently of the bounce animation.
+    requestAnimationFrame(() => {
+      setTimeout(() => banner.classList.add("visible"), 30);
+    });
+    setTimeout(() => banner.classList.add("bounce"), 550);
+
+    banner.addEventListener("click", openPanel);
+    banner.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openPanel();
+      }
+    });
+    banner.querySelector("#rag-chat-banner-close").addEventListener("click", (e) => {
+      e.stopPropagation();
+      hideBanner();
+    });
+  }
 
   function renderSuggestions() {
     suggestionsEl.innerHTML = "";
