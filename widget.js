@@ -306,6 +306,50 @@
       color: inherit;
       text-decoration: underline;
     }
+  .rag-msg.assistant .rag-product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    text-decoration: none !important;
+    color: #1f2937 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .rag-msg.assistant .rag-product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: ${config.accentColor};
+  }
+  .rag-msg.assistant .rag-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rag-msg.assistant .rag-card-title {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+    color: #111827;
+  }
+  .rag-msg.assistant .rag-card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: ${config.accentColor};
+    color: ${config.accentTextColor} !important;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   `;
   document.head.appendChild(style);
 
@@ -466,20 +510,69 @@
   // and auto-linked URLs. Deliberately small (no build step / dependencies)
   // and re-runs safely on the growing string as tokens stream in.
   function renderMarkdown(text) {
-    const lines = escapeHtml(text).split("\n");
+    // Helper to extract a human-friendly title if the link anchor text is a raw URL
+    function getDisplayTitle(anchorText, url) {
+      const rawAnchor = anchorText.trim();
+      if (rawAnchor.startsWith("http://") || rawAnchor.startsWith("https://")) {
+        try {
+          const parsed = new URL(url);
+          const pathSegments = parsed.pathname.split("/").filter(Boolean);
+          if (pathSegments.length > 0) {
+            const slug = pathSegments[pathSegments.length - 1];
+            // Converts "healthy-almond-nutties-35-gms" -> "Healthy Almond Nutties 35 Gms"
+            return slug
+              .replace(/[-_]/g, " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase());
+          }
+        } catch (_) {}
+        return "View Product";
+      }
+      return rawAnchor;
+    }
+  
+    // 1. Convert Markdown links [Title](URL) into Product Cards FIRST (before escaping)
+    const cards = [];
+    const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    
+    let processedText = text.replace(markdownLinkRegex, (match, anchorText, url) => {
+      const displayTitle = getDisplayTitle(anchorText, url);
+      const cardHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer" class="rag-product-card"><div class="rag-card-body"><div class="rag-card-title">${escapeHtml(displayTitle)}</div><span class="rag-card-btn">View Product &rarr;</span></div></a>`;
+      
+      cards.push(cardHtml);
+      // Replace with a clean, unique HTML-safe token
+      return `%%PRODUCT_CARD_${cards.length - 1}%%`;
+    });
+  
+    // 2. Escape HTML for normal markdown text
+    let html = escapeHtml(processedText);
+  
+    // 3. Convert remaining bare URLs into Product Cards
+    const bareUrlRegex = /(https?:\/\/[^\s<]+)/g;
+    html = html.replace(bareUrlRegex, (url) => {
+      const clean = url.replace(/[).,;!?]+$/, "");
+      const trailing = url.slice(clean.length);
+      const displayTitle = getDisplayTitle(clean, clean);
+      
+      const cardHtml = `<a href="${clean}" target="_blank" rel="noopener noreferrer" class="rag-product-card"><div class="rag-card-body"><div class="rag-card-title">${escapeHtml(displayTitle)}</div><span class="rag-card-btn">View Product &rarr;</span></div></a>`;
+      cards.push(cardHtml);
+      return `%%PRODUCT_CARD_${cards.length - 1}%%${trailing}`;
+    });
+  
+    // 4. Handle bullet lists
+    const lines = html.split("\n");
     const blocks = [];
     let listBuffer = [];
-
+  
     function flushList() {
       if (listBuffer.length) {
         blocks.push("<ul>" + listBuffer.map((item) => `<li>${item}</li>`).join("") + "</ul>");
         listBuffer = [];
       }
     }
-
+  
     lines.forEach((line) => {
       const bulletMatch = line.match(/^\s*[*-]\s+(.*)$/);
-      if (bulletMatch) {
+      if (bulletMatch && !line.includes("%%PRODUCT_CARD_")) {
         listBuffer.push(bulletMatch[1]);
       } else {
         flushList();
@@ -487,17 +580,19 @@
       }
     });
     flushList();
-
-    let html = blocks.join("\n");
+  
+    html = blocks.join("\n");
+  
+    // 5. Bold & Italic formatting
     html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
     html = html.replace(/(^|[^*])\*([^*\s][^*]*?)\*(?!\*)/g, "$1<em>$2</em>");
     html = html.replace(/\b_(.+?)_\b/g, "<em>$1</em>");
-    html = html.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
-      const clean = url.replace(/[).,;!?]+$/, "");
-      const trailing = url.slice(clean.length);
-      return `<a href="${clean}" target="_blank" rel="noopener noreferrer">${clean}</a>${trailing}`;
+  
+    // 6. Restore the card components into the message
+    cards.forEach((cardHtml, index) => {
+      html = html.replace(`%%PRODUCT_CARD_${index}%%`, cardHtml);
     });
-
+  
     return html.split("\n").join("<br>");
   }
 
