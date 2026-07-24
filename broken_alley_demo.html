@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Broken Alley — Chat Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #111111;
+      color: #f5f5f5;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid #262626;
+    }
+    nav .logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    nav ul a { color: #ccc; text-decoration: none; }
+    nav ul a:hover { color: #fff; }
+
+    .hero {
+      text-align: center;
+      padding: 90px 24px 60px;
+    }
+    .hero .eyebrow {
+      display: inline-block;
+      border: 1px solid #444;
+      color: #aaa;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: 52px;
+      line-height: 1.05;
+      margin: 0 0 18px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+    }
+    .hero p {
+      max-width: 480px;
+      margin: 0 auto 30px;
+      font-size: 15px;
+      color: #999;
+    }
+    .hero .cta {
+      background: #fff;
+      color: #111;
+      border: none;
+      padding: 14px 34px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px 90px;
+      color: #555;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">Broken Alley</div>
+    <ul>
+      <li><a href="#">Collection</a></li>
+      <li><a href="#">Mission</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <span class="eyebrow">Luxury Streetwear</span>
+    <h1>Where Hustle Takes<br />A Coffee Break</h1>
+    <p>Limited-edition drops built on identity, individuality, and creative rebellion.</p>
+    <button class="cta">Shop The Collection</button>
+  </section>
+
+  <footer>
+    Demo page for the Broken Alley–themed chat assistant. Brand content mock — not the live site.
+  </footer>
+
+  <script>
+    window.RAG_CHAT_CONFIG = {
+      apiUrl: "http://localhost:5002/api/chat",
+      brandName: "Broken Alley",
+      accentColor: "#111111",
+      accentTextColor: "#ffffff",
+      accentOutlineColor: "#111111",
+      suggestedQuestions: [
+        "Do you have any embroidered shirts?",
+        "What can I wear to a party?",
+        "Do you have jackets?",
+      ],
+    };
+  </script>
+  <script src="widget.js"></script>
+</body>
+</html>
