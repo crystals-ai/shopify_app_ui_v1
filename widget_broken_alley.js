@@ -281,6 +281,7 @@
       <div>
         <div class="title">${config.brandName} Assistant</div>
         <div class="subtitle">Ask me anything about our products</div>
+        <div class="subtitle">Powered by SuperSearch</div>
       </div>
       <button id="rag-chat-close" aria-label="Close chat">&times;</button>
     </div>
